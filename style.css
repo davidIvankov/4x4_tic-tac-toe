@@ -1,0 +1,22 @@
+main {
+    width: 100vw;
+    height: 100vw;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 2vw;
+    justify-content: center;
+}
+table {
+    height: 50%;
+    width: 50%;
+}
+
+table, td {
+    border: 2px solid black;
+}
+td {
+    width: 33%;
+    height: 33%;
+    text-align: center;
+    font-size: 10rem;
+}
