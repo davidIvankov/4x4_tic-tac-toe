@@ -1,41 +1,56 @@
+import { Player } from "./player.js"
 const tiles = document.querySelectorAll('td')
-const computerTurn = function() {
-    const freeTiles = Array.from(tiles).filter((tile) => !tile.innerText)
-    if (freeTiles.length === 0) return
-    freeTiles[Math.floor(Math.random() * freeTiles.length)].innerText = 'O'
-}
-const determenWinner = function(char) {
-    const result = {}
-    const nodeArr = Array.from(tiles)
-    const filteredNodeList = nodeArr.filter(tile => tile.innerText === char)
-    if (filteredNodeList.length === 0) return
-    console.log(filteredNodeList[0])
-    filteredNodeList.reduce((result, tile) => {
-        property = tile.dataset.y
-        result[property] = (result[property] || 0) + 1
-        return result
-    }, result)
-    filteredNodeList.reduce((result, tile) => {
-        property = tile.parentElement.dataset.x
-        result[property] = (result[property] || 0) + 1
-        return result
-    }, result)
-    console.log(result)
-    if (Object.values(result).includes(3)) console.log(`${char} is a winner`)
-    else return
-}
-const handleClick = function(event) {
-    if (event.type === 'click' || (event.type === 'keydown' && event.key === 'Enter')) {
-        event.target.innerText = 'x'
-        computerTurn()
-        determenWinner('x')
-        determenWinner('O')
+const resetButton = document.querySelector('button')
+let winner
+const x = new Player('x')
+const O = new Player('O')
+
+const determenDrow = function(o, x) {
+    if (Array.from(tiles).filter(tile => tile.innerText !== '').length === 9) {
+        resetButton.disabled = false
+        O.reset()
+        x.reset()
+        console.log('draw')
     }
 }
+const analizeBoard = function() {
+    if (x.checkForWin().length === 3) {
+        console.log(`winner is ${x.char}`)
+        x.reset()
+        winner = true
+        resetButton.disabled = false
+    } else if (O.checkForWin().length === 3) {
+        console.log(`winner is ${O.char}`)
+        O.reset()
+        winner = true
+        resetButton.disabled = false
+    } else {
+        determenDrow()
+    }
+}
+const handleClick = function(event) {
+    if ((event.type === 'click' || (event.type === 'keydown' && event.key === 'Enter')) && event.target.innerText === '' && !winner) {
+        x.makeMove(event.target)
+        analizeBoard()
+        if (!winner) {
+            O.computreMove(tiles)
+            analizeBoard()
+        }
+    }
+}
+
 const handleEnter = function(event) {
     event.target.addEventListener('keydown', handleClick)
 }
 tiles.forEach((field) => {
     field.addEventListener('click', handleClick)
     field.addEventListener('focus', handleEnter)
+})
+resetButton.addEventListener('click', () =>{
+    tiles.forEach((tile) => {
+        tile.innerText = ''
+        tile.style.backgroundColor = 'white'
+    })
+    winner = undefined
+    resetButton.disabled = true
 })
