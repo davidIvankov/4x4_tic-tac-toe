@@ -5,23 +5,20 @@ let winner
 const x = new Player('x')
 const O = new Player('O')
 
-const determenDrow = function(o, x) {
-    if (Array.from(tiles).filter(tile => tile.innerText !== '').length === 9) {
+const determenDrow = function() {
+    if (Array.from(tiles).filter(tile => tile.innerText !== '').length === 16) {
         resetButton.disabled = false
         O.reset()
         x.reset()
         console.log('draw')
     }
 }
-const analizeBoard = function() {
-    if (x.checkForWin().length === 3) {
-        console.log(`winner is ${x.char}`)
-        x.reset()
-        winner = true
-        resetButton.disabled = false
-    } else if (O.checkForWin().length === 3) {
-        console.log(`winner is ${O.char}`)
-        O.reset()
+const analizeBoard = function(player, opponent) {
+    if (player.checkForWin().length === 4) {
+        console.log(`winner is ${player.char}`)
+        player.reset()
+        opponent.reset()
+
         winner = true
         resetButton.disabled = false
     } else {
@@ -31,10 +28,10 @@ const analizeBoard = function() {
 const handleClick = function(event) {
     if ((event.type === 'click' || (event.type === 'keydown' && event.key === 'Enter')) && event.target.innerText === '' && !winner) {
         x.makeMove(event.target)
-        analizeBoard()
+        analizeBoard(x, O)
         if (!winner) {
             O.computreMove(tiles)
-            analizeBoard()
+            analizeBoard(O, x)
         }
     }
 }

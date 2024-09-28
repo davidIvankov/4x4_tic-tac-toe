@@ -15,7 +15,7 @@ export class Player {
     }
 
     _getWinningFields(coordinates) {
-        return Object.keys(coordinates).find(key => coordinates[key] === 3)
+        return Object.keys(coordinates).find(key => coordinates[key] === 4)
     }
     _checkY() {
         const yCoordinateWin = {}
@@ -25,7 +25,6 @@ export class Player {
             return yCoordinateWin
         }, yCoordinateWin)
         const y = this._getWinningFields(yCoordinateWin)
-        console.log(y)
         if (y) {
            this._winningFields = this._fields.filter(field => field.dataset.y === y)
         }
@@ -33,7 +32,10 @@ export class Player {
     computreMove(tiles) {
         const freeTiles = Array.from(tiles).filter((tile) => !tile.innerText)
         if (freeTiles.length === 0) return
-        freeTiles[Math.floor(Math.random() * freeTiles.length)].innerText = this.char
+        const element = freeTiles[Math.floor(Math.random() * freeTiles.length)]
+        element.innerText = this.char
+        this._fields.push(element)
+        this._winningFields = []
     }
     _checkX() {
         const xCoordinateWin = {}
@@ -50,13 +52,14 @@ export class Player {
     _checkDiagonals1() {
         const list = this._fields.filter(field => field.dataset.y === field.parentElement.dataset.x)
         console.log(list)
-        if (list.length === 3) {
+        if (list.length === 4) {
             this._winningFields = list
         }
     }
     _checkDiagonals2() {
-        const list = this._fields.filter(field => (parseInt(field.dataset.y) + parseInt(field.parentElement.dataset.x)) === 4)
-        if (list.length === 3) {
+        const list = this._fields.filter(field => (parseInt(field.dataset.y) + parseInt(field.parentElement.dataset.x)) === 5)
+        console.log(list)
+        if (list.length === 4) {
             this._winningFields = list
         }
     }
@@ -66,6 +69,7 @@ export class Player {
         this._checkDiagonals1()
         this._checkDiagonals2()
         this._winningFields.forEach((field => field.style.backgroundColor = 'green'))
+        console.log(this._winningFields)
         return this._winningFields
     }
 
